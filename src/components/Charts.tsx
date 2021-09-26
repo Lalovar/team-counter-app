@@ -9,7 +9,7 @@ import {
 } from "reactstrap";
 
 import { Views } from "../App";
-import { clearStorage } from "../controller";
+import { clearOnlyMatchStorage, clearStorage } from "../controller";
 import { Player } from "./Players";
 import { Stat } from "./Stats";
 
@@ -20,6 +20,11 @@ type ChartsProps = {
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
   setStats: React.Dispatch<React.SetStateAction<Stat[]>>;
 };
+
+enum DELETION {
+  ALL,
+  MATCH,
+}
 
 export function Charts({
   setView,
@@ -35,10 +40,15 @@ export function Charts({
     setSelectedPlayer(value);
   };
 
-  const handleDeleteAll = () => {
-    const answer = window.confirm("Borrar todo?");
+  const handleDeleteAll = (criteria: DELETION) => {
+    const answer = window.confirm("Segura?");
     if (answer) {
-      clearStorage(setPlayers, setStats);
+      if (criteria === DELETION.ALL) {
+        clearStorage(setPlayers, setStats);
+      }
+      if (criteria === DELETION.MATCH) {
+        clearOnlyMatchStorage(setStats, stats);
+      }
     }
   };
 
@@ -72,8 +82,22 @@ export function Charts({
       <br />
       <br />
       <br />
-      <Button color="danger" size="lg" block onClick={() => handleDeleteAll()}>
-        Borrar todos los datos
+      <Button
+        color="warning"
+        size="lg"
+        block
+        onClick={() => handleDeleteAll(DELETION.MATCH)}
+      >
+        Borrar datos de partido
+      </Button>
+      <br />
+      <Button
+        color="danger"
+        size="lg"
+        block
+        onClick={() => handleDeleteAll(DELETION.ALL)}
+      >
+        Borrar datos de partido y jugadores
       </Button>
     </>
   );

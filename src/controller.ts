@@ -36,3 +36,15 @@ export function clearStorage(
   setStats(defaultStats);
   localStorage.clear();
 }
+
+export function clearOnlyMatchStorage(
+  setStats: React.Dispatch<React.SetStateAction<Stat[]>>,
+  stats: Stat[]
+) {
+  const newStats: Stat[] = [];
+  stats.forEach((item) =>
+    newStats.push({ name: item.name, color: item.color, count: [] })
+  );
+  setStats(newStats);
+  saveDataOnStorage(newStats, StorageType.STATS);
+}
